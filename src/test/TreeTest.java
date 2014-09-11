@@ -65,11 +65,63 @@ public class TreeTest {
 	@Test
 	public void testGenerateRandomTree() {
 		for (int i = 0; i < 20; i++) {
-			Node randomTree = TreeManipulatorTabajara.generateRandomTree1(0);
+			Node randomTree = TreeManipulatorTabajara.generateRandomTree();
 			System.out.println(randomTree.composite());
 			System.out.println(TreeManipulatorTabajara.treeAsMap(randomTree));
 			System.out.println("===================");
 			System.out.println();
 		}
 	}
+	
+	@Test
+	public void testCrossover() {
+		Node getRandomNumber = new Node(new Node[] {},
+				Component.GET_RANDOM_NUMBER);
+
+		Node getDistance = new Node(new Node[] {}, Component.GET_ENEMY_DISTANCE);
+		Node abs = new Node(new Node[] { getRandomNumber }, Component.ABS);
+		Node root1 = new Node(new Node[] { abs, getDistance }, Component.ADD);
+		System.out.println("ROOT 1:");
+		System.out.println(root1.composite());
+		
+		Node getRandomNumber2 = new Node(new Node[] {},
+				Component.GET_RANDOM_NUMBER);
+		Node cos = new Node(new Node[] { getRandomNumber2 }, Component.COS);
+		Node root2 = new Node(new Node[] { cos }, Component.SIN);
+		System.out.println("ROOT 2:");
+		System.out.println(root2.composite());
+		
+		TreeManipulatorTabajara.crossover(root1, root2);
+		
+		System.out.println("============================");
+		System.out.println("Depois do crossover");
+		System.out.println("ROOT 1:");
+		System.out.println(root1.composite());
+		System.out.println("ROOT 2:");
+		System.out.println(root2.composite());
+		System.out.println();
+		
+		
+	}
+	
+	@Test
+	public void testMutation() {
+		Node getRandomNumber = new Node(new Node[] {},
+				Component.GET_RANDOM_NUMBER);
+
+		Node getDistance = new Node(new Node[] {}, Component.GET_ENEMY_DISTANCE);
+		Node abs = new Node(new Node[] { getRandomNumber }, Component.ABS);
+		Node root1 = new Node(new Node[] { abs, getDistance }, Component.ADD);
+		System.out.println("ROOT 1:");
+		System.out.println(root1.composite());
+		
+		TreeManipulatorTabajara.mutation(root1);
+		System.out.println("============================");
+		System.out.println("Depois do mutation");
+		System.out.println("ROOT 1:");
+		System.out.println(root1.composite());
+		System.out.println();
+	}
+	
+	
 }

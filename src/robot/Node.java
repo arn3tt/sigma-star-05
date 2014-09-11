@@ -25,6 +25,14 @@ public class Node {
 		this.children = children;
 	}
 	
+	public void replaceChild(Node old, Node newChild) {
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].equals(old)) {
+				children[i] = newChild;
+			}
+		}
+	}
+	
 	public Node getParent() {
 		return parent;
 	}
