@@ -1,5 +1,8 @@
+package robot;
+
 public class Node {
 
+	private Node parent;
 	private Node[] children;
 	private Component component;
 
@@ -7,8 +10,11 @@ public class Node {
 		if (children == null) {
 			throw new RuntimeException("");
 		}
-		this.children = children;
 		this.component = component;
+		this.children = children;
+		for (Node child : children) {
+			child.setParent(this);
+		}
 	}
 
 	public Node[] getChildren() {
@@ -17,6 +23,14 @@ public class Node {
 
 	public void setChildren(Node[] children) {
 		this.children = children;
+	}
+	
+	public Node getParent() {
+		return parent;
+	}
+	
+	public void setParent(Node parent) {
+		this.parent = parent;
 	}
 
 	public Component getComponent() {
@@ -31,8 +45,11 @@ public class Node {
 		String representation = component.toString();
 		if (!isLeaf()) {
 			representation += "(";
-			for (Node n : children) {
-				representation += n.composite();
+			for (int i = 0; i < children.length; i++) {
+				representation += children[i].composite();
+				if (i != children.length - 1) {
+					representation += ", ";
+				}
 			}
 			representation += ")";
 		}
@@ -41,5 +58,10 @@ public class Node {
 
 	public boolean isLeaf() {
 		return children.length == 0;
+	}
+
+	@Override
+	public String toString() {
+		return composite();
 	}
 }

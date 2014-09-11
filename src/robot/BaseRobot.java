@@ -1,3 +1,4 @@
+package robot;
 import java.util.Random;
 
 import robocode.AdvancedRobot;
@@ -30,22 +31,27 @@ public class BaseRobot extends AdvancedRobot {
 		}
 	}
 
+	// TERMINAL
 	protected double getEnemyBearing(ScannedRobotEvent e) {
 		return e.getBearing();
 	}
 
+	// TERMINAL
 	protected double getEnemyDistance(ScannedRobotEvent e) {
 		return e.getDistance();
 	}
 
+	// TERMINAL
 	protected double getEnemyVelocity(ScannedRobotEvent e) {
 		return e.getVelocity();
 	}
 
+	// TERMINAL
 	protected double getEnemyHeading(ScannedRobotEvent e) {
 		return e.getHeading();
 	}
 
+	// TERMINAL
 	protected double getEnemyEnergy(ScannedRobotEvent e) {
 		return e.getEnergy();
 	}
@@ -89,14 +95,14 @@ public class BaseRobot extends AdvancedRobot {
 	protected double divide(double firstArgument, double secondArgument) {
 		return firstArgument / secondArgument;
 	}
-
-	protected double ifGreater(double x, double y, double ifTrue, double ifFalse) {
-		return x > y ? ifTrue : ifFalse;
-	}
-
+	
 	// TODO Change to ifNegative (makes more sense)
 	protected double ifPositive(double x, double ifTrue, double ifFalse) {
 		return x > 0 ? ifTrue : ifFalse;
+	}
+
+	protected double ifGreater(double x, double y, double ifTrue, double ifFalse) {
+		return x > y ? ifTrue : ifFalse;
 	}
 
 }
