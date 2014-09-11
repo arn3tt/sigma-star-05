@@ -19,14 +19,13 @@ import javax.tools.ToolProvider;
 
 public class GeneticProgram {
 
-	private static final String GENERATED_ROBOTS_PATH = "src/gen";
-
 	private final static String LINE_SEPARATOR = System
 			.getProperty("line.separator");
+	private static final String GENERATED_ROBOTS_PATH = "src/gen";
 
-	private final static String CODE_PATH = GENERATED_ROBOTS_PATH + "/%s.java";
-
-	private static final String NAME = "GeneticRobot";
+	private final static String ROBOTS_NAME_TEMPLATE = GENERATED_ROBOTS_PATH
+			+ "/%s.java";
+	private static final String ROBOTS_COMMON_NAME = "GeneticRobot";
 	private static final String CODE_TEMPLATE_PATH = "template/TemplateRobot.java";
 	private static final String CODE_TEMPLATE = generateCommonTemplate();
 
@@ -48,7 +47,7 @@ public class GeneticProgram {
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
 				diagnostics, null, null);
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager
-				.getJavaFileObjectsFromStrings(getAllRobotJavaClasses());
+				.getJavaFileObjectsFromStrings(getAllRobotJavaClassesLocation());
 
 		new File("bin/gen").mkdir();
 		Iterable<String> options = Arrays.asList(new String[] { "-d", "bin" });
@@ -60,16 +59,22 @@ public class GeneticProgram {
 		} catch (IOException e) {
 			System.err.println("Unexpected Error: " + e.getMessage());
 		}
+
+		if (!success) {
+			System.err.println("Robot classes were not compiled successfully");
+		}
 	}
 
-	private static List<String> getAllRobotJavaClasses() {
+	private static List<String> getAllRobotJavaClassesLocation() {
 		List<String> robotClasses = new ArrayList<String>();
 		File genDir = new File(GENERATED_ROBOTS_PATH);
 		if (genDir.exists()) {
 			for (File geneticRobotClass : genDir.listFiles()) {
-				robotClasses.add(GENERATED_ROBOTS_PATH + geneticRobotClass.getName());
+				robotClasses.add(GENERATED_ROBOTS_PATH + "/"
+						+ geneticRobotClass.getName());
 			}
 		}
+		System.out.println(robotClasses.toString());
 		return robotClasses;
 	}
 
@@ -81,7 +86,7 @@ public class GeneticProgram {
 	}
 
 	private static void createRobotJavaClass(GeneticRobot robot) {
-		String path = String.format(CODE_PATH, robot.getName());
+		String path = String.format(ROBOTS_NAME_TEMPLATE, robot.getName());
 		FileWriter robotFile;
 		try {
 			robotFile = new FileWriter(path);
@@ -139,7 +144,7 @@ public class GeneticProgram {
 			for (int j = 0; j < trees.length; j++) {
 				trees[j] = TreeManipulatorTabajara.generateRandomTree();
 			}
-			robots[i] = new GeneticRobot(NAME + i, -1, trees);
+			robots[i] = new GeneticRobot(ROBOTS_COMMON_NAME + i, -1, trees);
 		}
 	}
 

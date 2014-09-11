@@ -4,7 +4,7 @@ import robocode.ScannedRobotEvent;
 import robot.BaseRobot;
 
 /**
- * Sigma ftw
+ * bbb
  */
 public class # extends BaseRobot {
 
