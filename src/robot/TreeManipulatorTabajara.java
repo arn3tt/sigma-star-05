@@ -68,7 +68,7 @@ public class TreeManipulatorTabajara {
 		return generateRandomTree(0);
 	}
 
-	public static Node generateRandomTree(int currentDepth) {
+	private static Node generateRandomTree(int currentDepth) {
 		if (currentDepth >= MINIMUM_ALLOWED_DEPTH && currentDepth < MAXIMUM_ALLOWED_DEPTH) {
 			if (Math.random() < TERMINALS_RATE) {
 				return generateRandomTerminalNode();

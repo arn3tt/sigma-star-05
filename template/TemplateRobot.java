@@ -1,19 +1,25 @@
-package robot;
+package gen;
 
 import robocode.ScannedRobotEvent;
+import robot.BaseRobot;
 
-public class FirstRobot extends BaseRobot {
+/**
+ * Sigma ftw
+ */
+public class # extends BaseRobot {
 
 	@Override
 	public void run() {
 		super.run();
 		while (true) {
-			setTurnLeft(360);
-			execute();
+			turnRadarLeft(360);
 		}
 	}
 
 	@Override
 	public void onScannedRobot(ScannedRobotEvent e) {
+		ahead(#);
+		turnRight(#);
+		turnGunRight(#);
 	}
 }

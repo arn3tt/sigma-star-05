@@ -20,7 +20,7 @@ public class BattleRunner {
 		// RobocodeEngine engine = new RobocodeEngine(); // Run from current
 		// working directory
 		RobocodeEngine engine = new RobocodeEngine(new java.io.File(
-				"/home/afaranha/robocode")); // Run from C:/Robocode
+				"/home/rafaelc/arnett/robocode-1.9.2.2-setup")); // Run from C:/Robocode
 
 		// Add our own battle listener to the RobocodeEngine
 		engine.addBattleListener(new BattleObserver());
@@ -34,7 +34,7 @@ public class BattleRunner {
 		BattlefieldSpecification battlefield = new BattlefieldSpecification(
 				800, 600); // 800x600
 		RobotSpecification[] selectedRobots = engine
-				.getLocalRepository("robot.FirstRobot*, sample.TrackFire");
+				.getLocalRepository("gen.GeneticRobot2*, sample.SpinBot");
 
 		BattleSpecification battleSpec = new BattleSpecification(
 				numberOfRounds, battlefield, selectedRobots);
@@ -46,7 +46,7 @@ public class BattleRunner {
 		engine.close();
 
 		// Make sure that the Java VM is shut down properly
-		System.out.println("Durou " + (System.currentTimeMillis() - startTime));
+		System.out.println("--Durou " + (System.currentTimeMillis() - startTime));
 		System.exit(0);
 	}
 }
