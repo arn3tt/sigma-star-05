@@ -1,7 +1,7 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class TreeTest {
 		Node node;
 		for (int i = 0; i < 50; i++) {
 			node = TreeManipulatorTabajara.selectRandomNode(tree);
-			assertNotEquals(node, tree);
+			assertFalse(node.equals(tree));
 			assertNotNull(node.getParent());
 		}
 	}

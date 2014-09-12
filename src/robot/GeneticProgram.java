@@ -30,7 +30,7 @@ public class GeneticProgram {
 	private static final String CODE_TEMPLATE = generateCommonTemplate();
 
 	private final static int GENERATIONS = 100;
-	private final static int POPULATION = 128;
+	public final static int POPULATION = 128;
 
 	private static GeneticRobot[] robots = new GeneticRobot[POPULATION];
 
