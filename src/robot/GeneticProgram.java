@@ -17,25 +17,33 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import battle.BattleRunner;
+
 public class GeneticProgram {
 
 	private final static String LINE_SEPARATOR = System
 			.getProperty("line.separator");
-	private static final String GENERATED_ROBOTS_PATH = "src/gen";
+	private final static String FILE_SEPARATOR = System
+			.getProperty("file.separator");
+
+	private static final String ROBOCODE_ROBOTS_PATH = BattleRunner.ROBOCODE_HOME + FILE_SEPARATOR + "robots";
+
+	private static final String GENERATED_ROBOTS_PATH = ROBOCODE_ROBOTS_PATH + FILE_SEPARATOR + "genetic";
 
 	private final static String ROBOTS_NAME_TEMPLATE = GENERATED_ROBOTS_PATH
 			+ "/%s.java";
+
 	private static final String ROBOTS_COMMON_NAME = "GeneticRobot";
 	private static final String CODE_TEMPLATE_PATH = "template/TemplateRobot.java";
 	private static final String CODE_TEMPLATE = generateCommonTemplate();
 
-	private final static int GENERATIONS = 100;
+	public final static int GENERATIONS = 100;
 	public final static int POPULATION = 128;
 
 	private static GeneticRobot[] robots = new GeneticRobot[POPULATION];
 
 	public static void main(String[] args) {
-		populate();
+		populateRobots();
 		clearRobots();
 		createRobotJavaClasses();
 		compileRobotJavaClasses();
@@ -49,8 +57,7 @@ public class GeneticProgram {
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager
 				.getJavaFileObjectsFromStrings(getAllRobotJavaClassesLocation());
 
-		new File("bin/gen").mkdir();
-		Iterable<String> options = Arrays.asList(new String[] { "-d", "bin" });
+		Iterable<String> options = Arrays.asList(new String[] { "-d", ROBOCODE_ROBOTS_PATH });
 		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager,
 				diagnostics, options, null, compilationUnits);
 		boolean success = task.call();
@@ -74,7 +81,6 @@ public class GeneticProgram {
 						+ geneticRobotClass.getName());
 			}
 		}
-		System.out.println(robotClasses.toString());
 		return robotClasses;
 	}
 
@@ -138,7 +144,7 @@ public class GeneticProgram {
 		return null;
 	}
 
-	private static void populate() {
+	private static void populateRobots() {
 		for (int i = 0; i < robots.length; i++) {
 			Node[] trees = new Node[GeneticRobot.TREES];
 			for (int j = 0; j < trees.length; j++) {

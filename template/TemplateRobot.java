@@ -1,11 +1,8 @@
-package gen;
+package genetic;
 
 import robocode.ScannedRobotEvent;
 import robot.BaseRobot;
 
-/**
- * bbb
- */
 public class # extends BaseRobot {
 
 	@Override

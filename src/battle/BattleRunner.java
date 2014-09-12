@@ -1,81 +1,109 @@
 package battle;
 
-import robocode.control.*;
-import robocode.control.events.*;
+import robocode.BattleResults;
+import robocode.control.BattleSpecification;
+import robocode.control.BattlefieldSpecification;
+import robocode.control.RobocodeEngine;
+import robocode.control.RobotSpecification;
+import robocode.control.events.BattleAdaptor;
+import robocode.control.events.BattleCompletedEvent;
+import robocode.control.events.BattleErrorEvent;
 
-//
-// Application that demonstrates how to run two sample robots in Robocode using the
-// RobocodeEngine from the robocode.control package.
-//
-// @author Flemming N. Larsen
-//
+/**
+ * 
+ * @author toxicblu
+ * 
+ */
 public class BattleRunner {
 
-	public static void main(String[] args) {
-		long startTime = System.currentTimeMillis();
-		// Disable log messages from Robocode
+	private RobocodeEngine engine;
+	private BattlefieldSpecification battlefield;
+	private GeneticBattleObserver battleObserver;
+
+	private final static int BATTLE_HANDICAP = 20; // TODO Adapt this value
+
+	public static final String ROBOCODE_HOME = "/home/arnett/robocode";
+
+	public BattleRunner() {
 		RobocodeEngine.setLogMessagesEnabled(false);
+		engine = new RobocodeEngine(new java.io.File(ROBOCODE_HOME));
+		battleObserver = new GeneticBattleObserver();
+		engine.addBattleListener(battleObserver);
+		engine.setVisible(true);
+		battlefield = new BattlefieldSpecification(800, 600);
+	}
 
-		// Create the RobocodeEngine
-		// RobocodeEngine engine = new RobocodeEngine(); // Run from current
-		// working directory
-		RobocodeEngine engine = new RobocodeEngine(new java.io.File(
-				"/home/rafaelc/arnett/robocode-1.9.2.2-setup")); // Run from C:/Robocode
+	public double[] runRobocode(String bots[], String enemies[], int rounds) {
+		double fitnesses[] = new double[bots.length];
+		String bot, opponent;
+		BattleResults[] results;
 
-		// Add our own battle listener to the RobocodeEngine
-		engine.addBattleListener(new BattleObserver());
+		System.out.println("Running battles against sample batch");
+		for (int i = 0; i < bots.length; i++) {
+			double fitnessScore = 0;
+			for (int j = 0; j < enemies.length; j++) {
+				bot = bots[i];
+				opponent = enemies[j];
 
-		// Show the Robocode battle view
-//		engine.setVisible(true);
+				RobotSpecification[] selectedBots = engine
+						.getLocalRepository(bot + ", " + opponent);
+				BattleSpecification battleSpec = new BattleSpecification(
+						rounds, battlefield, selectedBots);
+				engine.runBattle(battleSpec, true);
 
-		// Setup the battle specification
+				results = battleObserver.getResults();
+				int myBot = (results[0].getTeamLeaderName().equals(bots[i]) ? 0
+						: 1);
+				int opBot = (myBot == 1 ? 0 : 1);
+				int botScore = results[myBot].getScore();
 
-		int numberOfRounds = 10;
-		BattlefieldSpecification battlefield = new BattlefieldSpecification(
-				800, 600); // 800x600
-		RobotSpecification[] selectedRobots = engine
-				.getLocalRepository("gen.GeneticRobot2*, sample.SpinBot");
+				double totalScore = botScore + results[opBot].getScore();
+				double roundFitness = (botScore + BATTLE_HANDICAP)
+						/ (totalScore + BATTLE_HANDICAP);
 
-		BattleSpecification battleSpec = new BattleSpecification(
-				numberOfRounds, battlefield, selectedRobots);
+				fitnessScore += roundFitness;
+			}
+			fitnesses[i] = fitnessScore / enemies.length; // take average of
+															// each round score
 
-		// Run our specified battle and let it run till it is over
-		engine.runBattle(battleSpec, true); // waits till the battle finishes
+		}
 
-		// Cleanup our RobocodeEngine
-		engine.close();
+		return fitnesses;
+	}
 
-		// Make sure that the Java VM is shut down properly
-		System.out.println("--Durou " + (System.currentTimeMillis() - startTime));
-		System.exit(0);
+	public double[] runBatchWithCoevolution(String bots[], int rounds) {
+		double fitnesses[] = new double[bots.length];
+		return fitnesses;
+	}
+
+	public static void main(String[] args) {
+		System.setProperty("robocode.home", ROBOCODE_HOME);
+		BattleRunner runner = new BattleRunner();
+		for (int i = 0; i < 3; i++) {
+			double[] results = runner.runRobocode(
+					new String[] { "gen.GeneticRobot0*" },
+					new String[] { "sample.Crazy" }, 10);
+			for (int j = 0; j < results.length; j++) {
+				System.out.println(results[j]);
+			}
+		}
 	}
 }
 
-//
-// Our private battle listener for handling the battle event we are interested
-// in.
-//
-class BattleObserver extends BattleAdaptor {
+class GeneticBattleObserver extends BattleAdaptor {
 
-	// Called when the battle is completed successfully with battle results
+	robocode.BattleResults[] results;
+
 	public void onBattleCompleted(BattleCompletedEvent e) {
-//		System.out.println("-- Battle has completed --");
-
-		// Print out the sorted results with the robot names
-//		System.out.println("Battle results:");
-		for (robocode.BattleResults result : e.getSortedResults()) {
-			System.out.println("  " + result.getTeamLeaderName() + ": "
-					+ result.getScore());
-		}
+		results = e.getIndexedResults();
 	}
 
-	// Called when the game sends out an information message during the battle
-	public void onBattleMessage(BattleMessageEvent e) {
-//		System.out.println("Msg> " + e.getMessage());
-	}
-
-	// Called when the game sends out an error message during the battle
 	public void onBattleError(BattleErrorEvent e) {
-//		System.out.println("Err> " + e.getError());
+		System.out.println("Error running battle: " + e.getError());
 	}
+
+	public BattleResults[] getResults() {
+		return results;
+	}
+
 }
