@@ -48,10 +48,9 @@ public class GeneticProgram {
 	private static final String CODE_TEMPLATE_PATH = "template/TemplateRobot.java";
 	private static final String CODE_TEMPLATE = generateCommonTemplate();
 
-	// Crossover must be even
 	public final static int POPULATION = 256;
-	public final static int GENERATIONS = 10;
-	public final static int ROUNDS = 5;
+	public final static int GENERATIONS = 200;
+	public final static int ROUNDS = 10;
 
 	public final static String OPPONENT = "sample.SpinBot";
 
@@ -106,7 +105,7 @@ public class GeneticProgram {
 					+ getAvgFitness(robots));
 
 			System.out.println("Beginning to evolute robots");
-			Breeding.evolute(robots);
+			BreedingSupraSumo.evolute(robots);
 			System.out.println("Evolution ended");
 		}
 	}

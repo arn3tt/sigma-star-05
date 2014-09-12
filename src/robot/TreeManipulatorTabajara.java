@@ -27,20 +27,20 @@ public class TreeManipulatorTabajara {
 	public static Node selectRandomNode(Node root) {
 		Map<String, List<Node>> nodeMap = treeAsMap(root);
 		double chooseNodeType = generator.nextDouble();
-		if (chooseNodeType <= FUNCTION_PROBABILITY) {
-			return getRandomNodeNotRoot(nodeMap.get(FUNCTION));
+		if (chooseNodeType <= FUNCTION_PROBABILITY && nodeMap.get(FUNCTION).size() > 1) {
+			return getRandomNodeNotRoot(root, nodeMap.get(FUNCTION));
 		} else {
-			return getRandomNodeNotRoot(nodeMap.get(TERMINAL));
+			return getRandomNodeNotRoot(root, nodeMap.get(TERMINAL));
 		}
 	}
 	
-	private static Node getRandomNodeNotRoot(List<Node> listNode) {
-		int randomIndex = generator.nextInt(listNode.size());
-		Node node = listNode.get(randomIndex);
-		while (node.getParent() == null) {
-			randomIndex = generator.nextInt(listNode.size());
-			node = listNode.get(randomIndex);
+	private static Node getRandomNodeNotRoot(Node root, List<Node> listNode) {
+		List<Node> copyNodes = new ArrayList<Node>(listNode);
+		if (copyNodes.contains(root)) {
+			copyNodes.remove(root);
 		}
+		int randomIndex = generator.nextInt(copyNodes.size());
+		Node node = copyNodes.get(randomIndex);
 		return node;
 	}
 
@@ -114,7 +114,13 @@ public class TreeManipulatorTabajara {
 		nodeTree2.setParent(parentTree1);
 		nodeTree2.getParent().replaceChild(nodeTree1, nodeTree2);
 	}
-	
+
+	public static void crossover(Node[] trees1, Node[] trees2) {
+		for (int i = 0; i < trees1.length; i++) {
+			crossover(trees1[i], trees2[i]);
+		}
+	}
+
 	public static void mutation(Node root) {
 		Node randomNode = selectRandomNode(root);
 		Node parent = randomNode.getParent();
@@ -124,4 +130,9 @@ public class TreeManipulatorTabajara {
 		parent.replaceChild(randomNode, mutationTreeRoot);
 	}
 
+	public static void mutation(Node[] trees) {
+		for (int i = 0; i < trees.length; i++) {
+			mutation(trees[i]);
+		}
+	}
 }
