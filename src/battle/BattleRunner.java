@@ -8,85 +8,65 @@ import robocode.control.RobotSpecification;
 import robocode.control.events.BattleAdaptor;
 import robocode.control.events.BattleCompletedEvent;
 import robocode.control.events.BattleErrorEvent;
+import robot.GeneticRobot;
 
-/**
- * 
- * @author toxicblu
- * 
- */
 public class BattleRunner {
 
 	private RobocodeEngine engine;
 	private BattlefieldSpecification battlefield;
 	private GeneticBattleObserver battleObserver;
 
-	private final static int BATTLE_HANDICAP = 20; // TODO Adapt this value
+	private final static int HANDICAP = 20; // TODO Adapt this value
 
 	public static final String ROBOCODE_HOME = "/home/arnett/robocode";
+	public static final String ROBOTS_PACKAGE = "genetic";
 
 	public BattleRunner() {
 		RobocodeEngine.setLogMessagesEnabled(false);
 		engine = new RobocodeEngine(new java.io.File(ROBOCODE_HOME));
 		battleObserver = new GeneticBattleObserver();
 		engine.addBattleListener(battleObserver);
-		engine.setVisible(true);
+//		engine.setVisible(true);
 		battlefield = new BattlefieldSpecification(800, 600);
 	}
 
-	public double[] runRobocode(String bots[], String enemies[], int rounds) {
-		double fitnesses[] = new double[bots.length];
-		String bot, opponent;
-		BattleResults[] results;
+	public void runBattle(GeneticRobot[] robots, String opponent, int rounds) {
+		for (GeneticRobot robot : robots) {
+			String robotClassName = ROBOTS_PACKAGE + "." + robot.getName() + "*";
 
-		System.out.println("Running battles against sample batch");
-		for (int i = 0; i < bots.length; i++) {
-			double fitnessScore = 0;
-			for (int j = 0; j < enemies.length; j++) {
-				bot = bots[i];
-				opponent = enemies[j];
+			RobotSpecification[] selectedBots = engine
+					.getLocalRepository(robotClassName + ", " + opponent);
+			BattleSpecification battleSpecification = new BattleSpecification(
+					rounds, battlefield, selectedBots);
+			engine.runBattle(battleSpecification, true);
 
-				RobotSpecification[] selectedBots = engine
-						.getLocalRepository(bot + ", " + opponent);
-				BattleSpecification battleSpec = new BattleSpecification(
-						rounds, battlefield, selectedBots);
-				engine.runBattle(battleSpec, true);
+			BattleResults[] results = battleObserver.getResults();
+			int myBot = (results[0].getTeamLeaderName().equals(robotClassName) ? 0
+					: 1);
+			int opBot = (myBot == 1 ? 0 : 1);
+			int botScore = results[myBot].getScore();
+			int opScore = results[opBot].getScore();
 
-				results = battleObserver.getResults();
-				int myBot = (results[0].getTeamLeaderName().equals(bots[i]) ? 0
-						: 1);
-				int opBot = (myBot == 1 ? 0 : 1);
-				int botScore = results[myBot].getScore();
+			double totalScore = botScore + opScore;
+			double geneticRobotFitness = (botScore + HANDICAP)
+					/ (totalScore + HANDICAP);
 
-				double totalScore = botScore + results[opBot].getScore();
-				double roundFitness = (botScore + BATTLE_HANDICAP)
-						/ (totalScore + BATTLE_HANDICAP);
-
-				fitnessScore += roundFitness;
-			}
-			fitnesses[i] = fitnessScore / enemies.length; // take average of
-															// each round score
-
+			robot.setFitness(geneticRobotFitness);
 		}
-
-		return fitnesses;
-	}
-
-	public double[] runBatchWithCoevolution(String bots[], int rounds) {
-		double fitnesses[] = new double[bots.length];
-		return fitnesses;
 	}
 
 	public static void main(String[] args) {
-		System.setProperty("robocode.home", ROBOCODE_HOME);
 		BattleRunner runner = new BattleRunner();
-		for (int i = 0; i < 3; i++) {
-			double[] results = runner.runRobocode(
-					new String[] { "gen.GeneticRobot0*" },
-					new String[] { "sample.Crazy" }, 10);
-			for (int j = 0; j < results.length; j++) {
-				System.out.println(results[j]);
-			}
-		}
+//		for (int i = 0; i < 3; i++) {
+//			double[] results = runner.runRobocode(
+//					new String[] { "genetic.GeneticRobot1*" },
+//					new String[] { "sample.Crazy" }, 10);
+//			for (int j = 0; j < results.length; j++) {
+//				System.out.println(results[j]);
+//			}
+//		}
+		GeneticRobot geneticRobot = new GeneticRobot("GeneticRobot12", -1, null);
+		runner.runBattle(new GeneticRobot[] {geneticRobot}, "sample.Crazy", 5);
 	}
 }
 

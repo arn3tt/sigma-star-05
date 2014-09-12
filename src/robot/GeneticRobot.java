@@ -5,15 +5,21 @@ public class GeneticRobot implements Comparable<GeneticRobot> {
 	public static final int TREES = 3;
 
 	private String name;
-	private int fitness;
+	private double fitness;
 	private Node[] trees = new Node[3];
 
-	public GeneticRobot(String name, int fitness, Node[] trees) {
+	public GeneticRobot(String name, double fitness, Node[] trees) {
 		this.name = name;
 		this.fitness = fitness;
 		this.trees = trees;
 	}
 
+	public GeneticRobot(GeneticRobot robot) {
+		this.name = robot.getName();
+		this.fitness = robot.getFitness();
+		this.trees = robot.getTrees();
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -22,11 +28,11 @@ public class GeneticRobot implements Comparable<GeneticRobot> {
 		this.name = name;
 	}
 
-	public int getFitness() {
+	public double getFitness() {
 		return fitness;
 	}
 
-	public void setFitness(int fitness) {
+	public void setFitness(double fitness) {
 		this.fitness = fitness;
 	}
 
@@ -40,7 +46,7 @@ public class GeneticRobot implements Comparable<GeneticRobot> {
 
 	@Override
 	public int compareTo(GeneticRobot o) {
-		return new Integer(fitness).compareTo(new Integer(o.getFitness()));
+		return new Double(fitness).compareTo(new Double(o.getFitness()));
 	}
 
 }

@@ -23,15 +23,18 @@ public class Breeding {
 		int index;
 		int index2;
 
+		System.out.println("elitism");
 		for (int i = 1; i <= ELITISM; i++) {
 			evoluted[robots.length - i] = true;
 		}
 
+		System.out.println("reproduction");
 		for (int i = 0; i <= REPRODUCTION; i++) {
 			index = getUnmodifiedRobotIndex(evoluted);
 			evoluted[index] = true;
 		}
 
+		System.out.println("mutation");
 		for (int i = 0; i < MUTATION; i++) {
 			index = getUnmodifiedRobotIndex(evoluted);
 			robot = robots[index];
@@ -41,6 +44,7 @@ public class Breeding {
 			evoluted[index] = true;
 		}
 
+		System.out.println("crossover");
 		for (int i = 0; i < CROSSOVER; i++) {
 			index = getUnmodifiedRobotIndex(evoluted);
 			index2 = getUnmodifiedRobotIndex(evoluted);
