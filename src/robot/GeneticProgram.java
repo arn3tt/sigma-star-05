@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
@@ -27,7 +28,9 @@ public class GeneticProgram {
 			.getProperty("line.separator");
 	private final static String FILE_SEPARATOR = System
 			.getProperty("file.separator");
-	
+
+	private final static Logger logger = Logger.getLogger("GeneticProgram");
+
 	private static SimpleDateFormat dateFormatter = new SimpleDateFormat(
 			"yyyy.MM.dd-HH:mm:ss");
 	private static Date STARTING_TIME = new Date();
@@ -45,9 +48,11 @@ public class GeneticProgram {
 	private static final String CODE_TEMPLATE_PATH = "template/TemplateRobot.java";
 	private static final String CODE_TEMPLATE = generateCommonTemplate();
 
+	// Crossover must be even
+	public final static int POPULATION = 256;
 	public final static int GENERATIONS = 10;
-	public final static int POPULATION = 128;
-	public final static int ROUNDS = 3;
+	public final static int ROUNDS = 5;
+
 	public final static String OPPONENT = "sample.SpinBot";
 
 	private static int currentGeneration = 0;
@@ -76,19 +81,21 @@ public class GeneticProgram {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("populating");
+		System.out.println("Populating robots");
 		populateRobots();
 
 		while (!terminationCriteriaSatisfied()) {
+			System.out.println("Generation " + currentGeneration);
 			clearRobots();
 			createRobotJavaClasses();
-			System.out.println("compiling robots for generation "
-					+ currentGeneration);
+			
+			System.out.println("Beginning to compile robots");
 			compileRobotJavaClasses();
+			System.out.println("Robots compiled");
 
-			System.out.println("running battle");
+			logger.info("Starting to run battle");
 			runner.runBattle(robots, OPPONENT, ROUNDS);
-			System.out.println("battle ended");
+			logger.info("Battle ended");
 
 			GeneticRobot bestRobot = getBestRobotByFitness(robots);
 			saveRobot(bestRobot);
@@ -98,9 +105,9 @@ public class GeneticProgram {
 			log("Average fitness for Generation " + currentGeneration + ": "
 					+ getAvgFitness(robots));
 
-			System.out.println("going to evolute");
+			System.out.println("Beginning to evolute robots");
 			Breeding.evolute(robots);
-			System.out.println("ended evolution");
+			System.out.println("Evolution ended");
 		}
 	}
 
