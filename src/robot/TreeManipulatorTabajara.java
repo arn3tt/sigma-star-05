@@ -20,9 +20,9 @@ public class TreeManipulatorTabajara {
 	private static final double TERMINALS_RATE = Double.valueOf(Component
 			.terminals().length) / Component.values().length;
 
-	private static final int MINIMUM_ALLOWED_DEPTH = 4;
+	private static final int MINIMUM_ALLOWED_DEPTH = 2;
 
-	private static final int MAXIMUM_ALLOWED_DEPTH = 10;
+	private static final int MAXIMUM_ALLOWED_DEPTH = 5;
 
 	public static Node selectRandomNode(Node root) {
 		Map<String, List<Node>> nodeMap = treeAsMap(root);

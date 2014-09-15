@@ -57,16 +57,8 @@ public class BattleRunner {
 
 	public static void main(String[] args) {
 		BattleRunner runner = new BattleRunner();
-//		for (int i = 0; i < 3; i++) {
-//			double[] results = runner.runRobocode(
-//					new String[] { "genetic.GeneticRobot1*" },
-//					new String[] { "sample.Crazy" }, 10);
-//			for (int j = 0; j < results.length; j++) {
-//				System.out.println(results[j]);
-//			}
-//		}
 		GeneticRobot geneticRobot = new GeneticRobot("GeneticRobot12", -1, null);
-		runner.runBattle(new GeneticRobot[] {geneticRobot}, "sample.Crazy", 5);
+		runner.runBattle(new GeneticRobot[] {geneticRobot}, "sample.SpinBot", 100);
 	}
 }
 

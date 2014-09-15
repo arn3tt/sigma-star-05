@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,20 +40,21 @@ public class GeneticProgram {
 
 	private static final String LOG_FILE_NAME = getLogFileName();
 
+	private static final String PROJECT_PATH = "/home/arnett/Projects/IA/sigma-star-05";
 	private static final String ROBOCODE_ROBOTS_PATH = BattleRunner.ROBOCODE_HOME
 			+ FILE_SEPARATOR + "robots";
 	private static final String GENERATED_ROBOTS_PATH = ROBOCODE_ROBOTS_PATH
 			+ FILE_SEPARATOR + BattleRunner.ROBOTS_PACKAGE;
 
-	private static final String ROBOTS_COMMON_NAME = "GeneticRobot";
+	public static final String ROBOTS_COMMON_NAME = "GeneticRobot";
 	private static final String CODE_TEMPLATE_PATH = "template/TemplateRobot.java";
 	private static final String CODE_TEMPLATE = generateCommonTemplate();
 
 	public final static int POPULATION = 256;
 	public final static int GENERATIONS = 200;
-	public final static int ROUNDS = 10;
+	public final static int ROUNDS = 25;
 
-	public final static String OPPONENT = "sample.SpinBot";
+	public final static String OPPONENT = "supersample.SuperRamFire*";
 
 	private static int currentGeneration = 0;
 	private static GeneticRobot[] robots = new GeneticRobot[POPULATION];
@@ -85,9 +87,10 @@ public class GeneticProgram {
 
 		while (!terminationCriteriaSatisfied()) {
 			System.out.println("Generation " + currentGeneration);
+
 			clearRobots();
 			createRobotJavaClasses();
-			
+
 			System.out.println("Beginning to compile robots");
 			compileRobotJavaClasses();
 			System.out.println("Robots compiled");
@@ -152,6 +155,7 @@ public class GeneticProgram {
 		JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager,
 				diagnostics, options, null, compilationUnits);
 		boolean success = task.call();
+
 		try {
 			fileManager.close();
 		} catch (IOException e) {
@@ -168,15 +172,25 @@ public class GeneticProgram {
 		File genDir = new File(GENERATED_ROBOTS_PATH);
 		if (genDir.exists()) {
 			for (File geneticRobotClass : genDir.listFiles()) {
-				robotClasses.add(GENERATED_ROBOTS_PATH + "/"
+				robotClasses.add(GENERATED_ROBOTS_PATH + FILE_SEPARATOR
 						+ geneticRobotClass.getName());
 			}
 		}
+		robotClasses.add(GENERATED_ROBOTS_PATH + FILE_SEPARATOR + "BaseRobot.java");
 		return robotClasses;
 	}
 
 	private static void createRobotJavaClasses() {
 		new File(GENERATED_ROBOTS_PATH).mkdir();
+
+		try {
+			File source = new File(PROJECT_PATH + FILE_SEPARATOR + "/src/genetic/BaseRobot.java");
+			File destiny = new File(GENERATED_ROBOTS_PATH + FILE_SEPARATOR + "BaseRobot.java");
+			Files.copy(source.toPath(), destiny.toPath());
+		} catch (IOException e) {
+			System.err.println("Unable to copy BaseRobot class to Robocode path");
+		}
+
 		for (int i = 0; i < robots.length; i++) {
 			createRobotJavaClass(GENERATED_ROBOTS_PATH, robots[i]);
 		}
@@ -184,7 +198,8 @@ public class GeneticProgram {
 
 	private static void createRobotJavaClass(String robotPath,
 			GeneticRobot robot) {
-		String path = robotPath + FILE_SEPARATOR + String.format("%s.java", robot.getName());
+		String path = robotPath + FILE_SEPARATOR
+				+ String.format("%s.java", robot.getName());
 		FileWriter robotFile;
 		try {
 			robotFile = new FileWriter(path);

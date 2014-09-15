@@ -54,7 +54,7 @@ public class BreedingSupraSumo {
 	}
 
 	/**
-	 * Returns five different indexes.
+	 * Returns five different random indexes.
 	 * 
 	 * @param maxValue
 	 * @param length
@@ -88,7 +88,15 @@ public class BreedingSupraSumo {
 		for (int i = 0; i < robots.length; i++) {
 			robots[i] = newPopulation.get(i);
 		}
+
+		fixupRobotNames(robots);
 		System.out.println("Evoluted population of size " + newPopulation.size());
+	}
+
+	private static void fixupRobotNames(GeneticRobot[] robots) {
+		for (int i = 0; i < robots.length; i++) {
+			robots[i].setName(GeneticProgram.ROBOTS_COMMON_NAME + i);
+		}
 	}
 
 }
